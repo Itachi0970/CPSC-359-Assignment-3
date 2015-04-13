@@ -47,12 +47,54 @@ start:
 	LDC_W OBJREF	//push OBJREF
 	ILOAD a
 	ILOAD b
+	INVOKEVIRTUAL imul
+	ISTORE final
+	LDC_W OBJREF
+	ILOAD final
+	INVOKEVIRTUAL print
+	
+	BIPUSH 0x0		//initialize a and b
+	DUP
+	ISTORE a
+	ISTORE b
+	BIPUSH 0x20		//print " "
+	OUT
+	LDC_W OBJREF
+	INVOKEVIRTUAL getnum
+	ISTORE a		//store return value in a
+	BIPUSH 0x2f		//print "/"
+	OUT
+	LDC_W OBJREF
+	INVOKEVIRTUAL getnum
+	ISTORE b		//store return value in b
+	BIPUSH 0x3d		// print "========"
+	DUP
+	DUP
+	DUP
+	DUP
+	DUP
+	DUP
+	DUP
+	OUT
+	OUT
+	OUT
+	OUT
+	OUT
+	OUT
+	OUT
+	OUT
+	BIPUSH 0xa		//print newline
+	OUT
+	LDC_W OBJREF	//push OBJREF
+	ILOAD a
+	ILOAD b
 	BIPUSH 0x0
 	INVOKEVIRTUAL idiv
 	ISTORE final
 	LDC_W OBJREF
 	ILOAD final
 	INVOKEVIRTUAL print
+	
 	GOTO start
 .end-main
 
@@ -104,8 +146,8 @@ mint2neg:
 	ISTORE abs_int2	//and store in local variable
 	
 mstart3:
-	ILOAD abs_int1
 	ILOAD abs_int2
+	ILOAD abs_int1
 	ISUB
 	IFLT mlessthan	//branch if abs(int2) > abs(int1)
 	GOTO mmorethan	//else, branch elsewhere
@@ -206,12 +248,12 @@ dstart3:
 	ISTORE r			//initialize r
 	
 dloop:
-	ILOAD abs_int2
 	ILOAD r
+	ILOAD abs_int2
 	ISUB
 	IFLT dcheckNeg		//leave loop when r < abs_int2
-	ILOAD abs_int2
 	ILOAD r
+	ILOAD abs_int2
 	ISUB
 	ISTORE r
 	ILOAD q
@@ -234,8 +276,8 @@ dcheckNeg:
 	ISTORE q		//q = -q
 
 dreturn:
-	BIPUSH 0x0
 	ILOAD return_type
+	BIPUSH 0x0
 	ISUB
 	IFLT dreturnr		//branch if return_type != 0
 	ILOAD q				//load q as return value
