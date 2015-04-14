@@ -44,6 +44,8 @@
 .label	out1		0xFD
 .label	in1		0xFC
 .label	neg1	0x12
+.label	imul1	0x01
+.label	idiv1	0x05
 
 // default instruction to place in any unused addresses of the control store
 .default	goto err1
@@ -238,5 +240,28 @@ in1	OPC=H=-1
 	TOS=MDR;wr ; goto Main1		// Write 
 
 neg1 H=TOS			// H = top of stack
-neg2 MAR=SP			// Read in next-to-top word on stack
-neg3 TOS=MDR=-H;wr ; goto Main1		// Add top two words; write to top of stack
+neg2 MAR=SP			// set MAR to top word
+neg3 TOS=MDR=-H;wr ; goto Main1		// get negation of top word; write to top of stack
+
+
+imul1   MAR = SP = SP - 1; rd
+imul2   OPC = TOS-1
+imul3   H = MDR
+imul4   MDR = TOS = MDR + H; wr
+imul5   OPC = OPC - 1
+imul6   Z = OPC; if(Z) goto myT1; else goto myF1
+
+myT1    goto Main1
+myF1    goto imul4
+
+
+idiv1   MAR = SP = SP - 1; rd
+idiv2   OPC = 0
+idiv3   H = TOS
+idiv4   MDR = TOS = MDR - H; wr
+idiv5   OPC = OPC + 1
+idiv6   N = MDR-H; if (N) goto myT2; else goto idiv4
+idiv7   MDR = TOS = OPC
+idiv8   MAR = SP; wr; goto Main1
+
+myT2    SP = SP + 1; goto idiv7
