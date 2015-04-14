@@ -1,3 +1,15 @@
+//	This program computes the product, quotient, and modulus of three sets of two numbers each.
+//    To use:
+//      Click the Run button
+//      Enter the first number (up to 8 digit hex, using upper-case "A"-"F")
+//      Press return
+//      Enter the second number and press return
+//      The resulting product will be displayed, with leading zeros (always prints 8 digits)
+//      Repeat for quotient and then modulus
+//		The program then repeats from product again
+//      Click on the Stop button
+//	Remember that every input and output is in base 16.
+
 .constant
 negMask 0x80		//bitmask for isolating the sign bit
 OBJREF 0x40				//needed for method invocation
@@ -9,6 +21,7 @@ OBJREF 0x40				//needed for method invocation
 a
 b
 final
+rem
 .end-var
 
 start:
@@ -89,6 +102,48 @@ start:
 	ILOAD a
 	ILOAD b
 	BIPUSH 0x0
+	INVOKEVIRTUAL idiv
+	ISTORE final
+	LDC_W OBJREF
+	ILOAD final
+	INVOKEVIRTUAL print
+	
+	BIPUSH 0x0		//initialize a and b
+	DUP
+	ISTORE a
+	ISTORE b
+	BIPUSH 0x20		//print " "
+	OUT
+	LDC_W OBJREF
+	INVOKEVIRTUAL getnum
+	ISTORE a		//store return value in a
+	BIPUSH 0x25		//print "%"
+	OUT
+	LDC_W OBJREF
+	INVOKEVIRTUAL getnum
+	ISTORE b		//store return value in b
+	BIPUSH 0x3d		// print "========"
+	DUP
+	DUP
+	DUP
+	DUP
+	DUP
+	DUP
+	DUP
+	OUT
+	OUT
+	OUT
+	OUT
+	OUT
+	OUT
+	OUT
+	OUT
+	BIPUSH 0xa		//print newline
+	OUT
+	LDC_W OBJREF	//push OBJREF
+	ILOAD a
+	ILOAD b
+	BIPUSH 0x1
 	INVOKEVIRTUAL idiv
 	ISTORE final
 	LDC_W OBJREF
@@ -276,10 +331,10 @@ dcheckNeg:
 	ISTORE q		//q = -q
 
 dreturn:
-	ILOAD return_type
 	BIPUSH 0x0
+	ILOAD return_type
 	ISUB
-	IFLT dreturnr		//branch if return_type != 0
+	IFLT dreturnr		//branch if return_type > 0
 	ILOAD q				//load q as return value
 	IRETURN				//return
 	
