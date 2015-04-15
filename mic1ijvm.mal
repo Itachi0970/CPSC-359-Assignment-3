@@ -244,47 +244,47 @@ neg2 MAR=SP			// set MAR to top word
 neg3 TOS=MDR=-H;wr ; goto Main1		// get negation of top word; write to top of stack
 
 
-imul1   MAR = SP-1; rd
-imul2   OPC = MDR
-imul3   MAR = SP = SP+1
-imul4   OPC = TOS ; wr
-imul5   MAR = SP-1; rd
-imul6   OPC = MDR
-imul7   MAR = SP = SP+1
-imul8   OPC = TOS ; wr
-imul9   MAR = SP = SP - 1; rd
-imul10   H = TOS
-imul11   MDR = TOS = MDR - H; wr
-imul12   N = TOS; if (N) goto imul13; else goto imul22
-imul13   MAR = SP = SP - 1; rd; 
-imul14   
-imul15   TOS = MDR
-imul16   MAR = SP - 1; rd
-imul17   MAR = SP
-imul18   H = MDR; wr
-imul19   MDR = TOS
-imul20   MAR = SP - 1; wr
-imul21   TOS = H; goto imul25
+imul1   MAR = SP-1; rd                                  //reads second word from the top of the stack
+imul2   OPC = MDR                                       //sets OPC to the second word from the top
+imul3   MAR = SP = SP+1                                 //adds a word to the top of the stack
+imul4   OPC = TOS ; wr                                  //duplicates the value read in at the start
+imul5   MAR = SP-1; rd                                  //reads second word from the top of the stack
+imul6   OPC = MDR                                       //sets OPC to the second word from the top
+imul7   MAR = SP = SP+1                                 //adds a word to the top of the stack
+imul8   OPC = TOS ; wr                                  //duplicates the value read in
+imul9   MAR = SP = SP - 1; rd                           //reads second word from the top of the stack
+imul10   H = TOS                                        //sets H to be the top of the stack
+imul11   MDR = TOS = MDR - H; wr                        //sets top of the stack to be H - MDR
+imul12   N = TOS; if (N) goto imul13; else goto imul22  //if this value is negative, will branch to loop that will pop off the top value and then swap the original values, else it will just pop off the top value and perform multiplication
+imul13   MAR = SP = SP - 1; rd;                         //reads second value from the top of the stack
+imul14                                                  //waits for read
+imul15   TOS = MDR                                      //copies new word to TOS
+imul16   MAR = SP - 1; rd                               //reads second word from the top of the stack
+imul17   MAR = SP                                       //sets MAR to value at the top of the stack
+imul18   H = MDR; wr                                    //H is TOS, writes 2nd word to TOS
+imul19   MDR = TOS                                      //MDR holds old TOS value
+imul20   MAR = SP - 1; wr                               //MAR now at 2nd word from top of stack, writes old TOS
+imul21   TOS = H; goto imul25                           //sets new TOS to original 2nd word from the top of stack
 
-imul22   MAR = SP = SP-1;rd;
-imul23   
-imul24   TOS = MDR
+imul22   MAR = SP = SP-1;rd;                            //reads second value from the top of the stack
+imul23                                                  //waits for read
+imul24   TOS = MDR                                      //copies new word to TOS
 
-imul25   MAR = SP = SP - 1; rd
-imul26   OPC = TOS-1
-imul27  H = MDR
-imul28  MDR = TOS = MDR + H; wr
-imul29  OPC = OPC - 1
-imul30  Z = OPC; if(Z) goto Main1; else goto imul28
+imul25   MAR = SP = SP - 1; rd                          //reads second word from the top of the stack
+imul26   OPC = TOS-1                                    //sets OPC to value at TOS -1
+imul27  H = MDR                                         //sets H to the second value from the top of the stack
+imul28  MDR = TOS = MDR + H; wr                         //TOS and MDR set to MDR + H, writes value
+imul29  OPC = OPC - 1                                   //decrements OPC
+imul30  Z = OPC; if(Z) goto Main1; else goto imul28     //if OPC is 0, will finish, else will repeat the multiplication algorithm
 
 
-idiv1   MAR = SP = SP - 1; rd
-idiv2   OPC = 0
-idiv3   H = TOS
-idiv4   MDR = TOS = MDR - H; wr
-idiv5   OPC = OPC + 1
-idiv6   N = MDR-H; if (N) goto myT2; else goto idiv4
-idiv7   MDR = TOS = OPC
-idiv8   MAR = SP; wr; goto Main1
+idiv1   MAR = SP = SP - 1; rd                           //reads second word from the top of the stack
+idiv2   OPC = 0                                         //sets OPC to 0
+idiv3   H = TOS                                         //sets H to top of stack
+idiv4   MDR = TOS = MDR - H; wr                         //sets TOS and MDR to int1 - int2
+idiv5   OPC = OPC + 1                                   //increments OPC for quotient counter
+idiv6   N = MDR-H; if (N) goto myT2; else goto idiv4    //if int1 - int2 is negative, will go to myT2 else goes to idiv4 to repeat loop
+idiv7   MDR = TOS = OPC                                 //sets TOS to quotient
+idiv8   MAR = SP; wr; goto Main1                        //sets SP to TOS and writes
 
-myT2    SP = SP + 1; goto idiv7
+myT2    SP = SP + 1; goto idiv7                         //sets SP to SP + 1
