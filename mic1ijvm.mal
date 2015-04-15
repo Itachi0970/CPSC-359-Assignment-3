@@ -244,15 +244,38 @@ neg2 MAR=SP			// set MAR to top word
 neg3 TOS=MDR=-H;wr ; goto Main1		// get negation of top word; write to top of stack
 
 
-imul1   MAR = SP = SP - 1; rd
-imul2   OPC = TOS-1
-imul3   H = MDR
-imul4   MDR = TOS = MDR + H; wr
-imul5   OPC = OPC - 1
-imul6   Z = OPC; if(Z) goto myT1; else goto myF1
+imul1   MAR = SP-1; rd
+imul2   OPC = MDR
+imul3   MAR = SP = SP+1
+imul4   OPC = TOS ; wr
+imul5   MAR = SP-1; rd
+imul6   OPC = MDR
+imul7   MAR = SP = SP+1
+imul8   OPC = TOS ; wr
+imul9   MAR = SP = SP - 1; rd
+imul10   H = TOS
+imul11   MDR = TOS = MDR - H; wr
+imul12   N = TOS; if (N) goto imul13; else goto imul22
+imul13   MAR = SP = SP - 1; rd; 
+imul14   
+imul15   TOS = MDR
+imul16   MAR = SP - 1; rd
+imul17   MAR = SP
+imul18   H = MDR; wr
+imul19   MDR = TOS
+imul20   MAR = SP - 1; wr
+imul21   TOS = H; goto imul25
 
-myT1    goto Main1
-myF1    goto imul4
+imul22   MAR = SP = SP-1;rd;
+imul23   
+imul24   TOS = MDR
+
+imul25   MAR = SP = SP - 1; rd
+imul26   OPC = TOS-1
+imul27  H = MDR
+imul28  MDR = TOS = MDR + H; wr
+imul29  OPC = OPC - 1
+imul30  Z = OPC; if(Z) goto Main1; else goto imul28
 
 
 idiv1   MAR = SP = SP - 1; rd
